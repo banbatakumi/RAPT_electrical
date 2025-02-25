@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-int16_t yaw, pitch, roll;
+float yaw, pitch, roll;
 
 const uint8_t LED_PIN = 1;
 
@@ -35,6 +35,9 @@ void loop() {
                         yaw = ((((uint16_t)recv_data[0] << 8) & 0xFF00) | ((int16_t)recv_data[1] & 0x00FF)) - 32768;
                         pitch = ((((uint16_t)recv_data[2] << 8) & 0xFF00) | ((int16_t)recv_data[3] & 0x00FF)) - 32768;
                         roll = ((((uint16_t)recv_data[4] << 8) & 0xFF00) | ((int16_t)recv_data[5] & 0x00FF)) - 32768;
+                        yaw *= 0.01;
+                        pitch *= 0.01;
+                        roll *= 0.01;
                   }
                   index = 0;
             } else {
@@ -47,6 +50,5 @@ void loop() {
             USBSerial.print(pitch);
             USBSerial.print(", roll = ");
             USBSerial.println(roll);
-            USBSerial.println("system start");
       }
 }
