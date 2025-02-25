@@ -54,9 +54,12 @@ void loop() {
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            yaw = ypr[0] * 180 / M_PI;
-            pitch = ypr[1] * 180 / M_PI;
-            roll = ypr[2] * 180 / M_PI;
+            yaw = (ypr[0] * 180 / M_PI) * 10;
+            pitch = (ypr[1] * 180 / M_PI) * 10;
+            roll = (ypr[2] * 180 / M_PI) * 10;
+            yaw += 1800;
+            pitch += 1800;
+            roll += 1800;
 
             // M5にデータ送信
             Serial1.write(0xFF);
