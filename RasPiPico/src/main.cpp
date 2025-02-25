@@ -54,21 +54,18 @@ void loop() {
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            yaw = (ypr[0] * 180 / M_PI) * 10;
-            pitch = (ypr[1] * 180 / M_PI) * 10;
-            roll = (ypr[2] * 180 / M_PI) * 10;
-            yaw += 1800;
-            pitch += 1800;
-            roll += 1800;
+            yaw = (ypr[0] * 180 / M_PI) * 100;
+            pitch = (ypr[1] * 180 / M_PI) * 100;
+            roll = (ypr[2] * 180 / M_PI) * 100;
 
             // M5にデータ送信
             Serial1.write(0xFF);
-            Serial1.write((uint8_t)((yaw & 0xFF00) >> 8));
-            Serial1.write((uint8_t)(yaw & 0x00FF));
-            Serial1.write((uint8_t)((pitch & 0xFF00) >> 8));
-            Serial1.write((uint8_t)(pitch & 0x00FF));
-            Serial1.write((uint8_t)((roll & 0xFF00) >> 8));
-            Serial1.write((uint8_t)(roll & 0x00FF));
+            Serial1.write((uint8_t)(((yaw + 32768) & 0xFF00) >> 8));
+            Serial1.write((uint8_t)((yaw + 32768) & 0x00FF));
+            Serial1.write((uint8_t)(((pitch + 32768) & 0xFF00) >> 8));
+            Serial1.write((uint8_t)((pitch + 32768) & 0x00FF));
+            Serial1.write((uint8_t)(((roll + 32768) & 0xFF00) >> 8));
+            Serial1.write((uint8_t)((roll + 32768) & 0x00FF));
             Serial1.write(0xAA);
             // Serial.print("yaw = ");
             // Serial.print(yaw);
