@@ -2,6 +2,7 @@
 
 #include "MPU6050_6Axis_MotionApps20.h"
 
+// mpu関連
 MPU6050 mpu;
 
 // MPU control/status vars
@@ -13,12 +14,16 @@ Quaternion q;         // [w, x, y, z]         quaternion container
 VectorFloat gravity;  // [x, y, z]            gravity vector
 float ypr[3];         // [roll, pitch, yaw]   roll/pitch/yaw container and gravity
 
+int16_t yaw, pitch, roll;
+
 void setup() {
       Serial.begin(9600);
       delay(1000);
       Serial.println("system start");
-      // Serial1.begin(9600);  // UART0初期化 TX:GP0 / RX:GP1
 
+      Serial1.begin(9600);  // UART0初期化 TX:GP0 / RX:GP1
+
+      // mpu関連
       Wire.begin();
       Wire.setClock(400000);  // 400kHz I2C clock. Comment this line if having compilation difficulties
       mpu.initialize();
@@ -49,10 +54,24 @@ void loop() {
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            Serial.print(ypr[2] * 180 / M_PI);
-            Serial.print(",");
-            Serial.print(ypr[1] * 180 / M_PI);
-            Serial.print(",");
-            Serial.println(ypr[0] * 180 / M_PI);
+            yaw = ypr[0] * 180 / M_PI;
+            pitch = ypr[1] * 180 / M_PI;
+            roll = ypr[2] * 180 / M_PI;
+
+            // M5にデータ送信
+            Serial1.write(0xFF);
+            Serial1.write((uint8_t)((yaw & 0xFF00) >> 8));
+            Serial1.write((uint8_t)(yaw & 0x00FF));
+            Serial1.write((uint8_t)((pitch & 0xFF00) >> 8));
+            Serial1.write((uint8_t)(pitch & 0x00FF));
+            Serial1.write((uint8_t)((roll & 0xFF00) >> 8));
+            Serial1.write((uint8_t)(roll & 0x00FF));
+            Serial1.write(0xAA);
+            // Serial.print("yaw = ");
+            // Serial.print(yaw);
+            // Serial.print(", pitch = ");
+            // Serial.print(pitch);
+            // Serial.print(",roll = ");
+            // Serial.println(roll);
       }
 }
