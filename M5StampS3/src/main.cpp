@@ -2,15 +2,20 @@
 
 int16_t yaw, pitch, roll;
 
+const uint8_t LED_PIN = 1;
+
 void setup() {
       // シリアル通信の初期化
       USBSerial.begin(9600);  // pc
       Serial.begin(9600);     // raspico
       delay(1000);
       USBSerial.println("system start");
+
+      pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
+      digitalWrite(LED_PIN, HIGH);
       static const uint8_t HEADER = 0xFF;   // ヘッダ
       static const uint8_t FOOTER = 0xAA;   // ヘッダ
       static const uint8_t data_size = 6;   // データのサイズ
@@ -42,6 +47,6 @@ void loop() {
             USBSerial.print(pitch);
             USBSerial.print(", roll = ");
             USBSerial.println(roll);
+            USBSerial.println("system start");
       }
-      USBSerial.println("system start");
 }
